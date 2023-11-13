@@ -1,44 +1,23 @@
-# ! Not Working 
-# Use the official Node.js 16 image as the base image
-FROM node:16
+# Use an official Node.js runtime as a parent image
+FROM node:14
 
-# Install necessary dependencies for Puppeteer and Chromium
-RUN apt-get update && apt-get install -y \
-    libnss3 \
-    libglib2.0-0 \
-    libfontconfig1 \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
-    libxcomposite1 \
-    libxcursor1 \
-    libxdamage1 \
-    libxext6 \
-    libxi6 \
-    libxrender1 \
-    libxss1 \
-    libxtst6 \
-    && apt-get install -y chromium \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set up environment variables for Puppeteer
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
-
-# Create and set the working directory in the container
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json to /app
 COPY package*.json ./
 
-# Install the project dependencies
+# Install app dependencies
 RUN npm install
 
-# Copy the rest of the application code to the working directory
+# Copy the current directory contents to /app
 COPY . .
 
-# Expose port 8080 for the application
+# Make port 8080 available to the world outside this container
 EXPOSE 8080
 
-# Command to run the application
+# Define environment variable
+ENV NODE_ENV=production
+
+# Run npm start when the container launches
 CMD ["npm", "start"]
